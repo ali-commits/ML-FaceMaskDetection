@@ -8,7 +8,7 @@ import time
 import cv2
 import os
 
-VID_STREAM = 4
+VID_STREAM = 0
 
 
 def detectMask(frame, faceNet, maskNet):
