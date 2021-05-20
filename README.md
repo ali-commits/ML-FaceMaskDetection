@@ -1,4 +1,4 @@
-# OpenCV-FaceMaskDetection
+# ML-FaceMaskDetection
 detect face masks using openCV and tensorFlow
 
 # Usage
