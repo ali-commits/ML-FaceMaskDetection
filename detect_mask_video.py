@@ -3,11 +3,8 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 from imutils.video import VideoStream
 import numpy as np
-import imutils
-import time
 import cv2
 import os
-
 VID_STREAM = 0
 
 
@@ -65,8 +62,6 @@ vs = VideoStream(src=VID_STREAM).start()
 while True:
 
     frame = vs.read()
-    # frame = imutils.resize(frame, width=400)
-
     locs, preds = detectMask(frame, faceNet, maskNet)
 
     for (box, pred) in zip(locs, preds):

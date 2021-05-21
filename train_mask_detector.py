@@ -18,11 +18,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-from tensorflow.python.ops.gen_nn_ops import lrn
 
 INIT_LR = 1e-4
-EPOCHS = 20
-BS = 32
+EPOCHS = 10
+BS = 16
 
 DIRECTORY = "dataset"
 CATEGORIES = os.listdir(DIRECTORY)  # ["with_mask", "without_mask"]
@@ -31,7 +30,6 @@ print("[INFO] loading images...")
 
 data = []
 labels = []
-
 
 # Preprocessing
 for category in CATEGORIES:
@@ -50,11 +48,15 @@ labels = lb.fit_transform(labels)
 labels = to_categorical(labels)
 
 data = np.array(data, dtype="float32")
-lables = np.array(labels)
+labels = np.array(labels)
 
-trainX, testX, trainY, testY = train_test_split(
-    data, labels, test_size=0.2, stratify=labels, random_state=42
-)
+# trainX, testX, trainY, testY = train_test_split(
+#     data, labels, test_size=0.2, stratify=labels, random_state=42
+# )
+trainX = data
+testX = data
+trainY = labels
+testY = labels
 
 # Learning
 aug = ImageDataGenerator(
@@ -62,10 +64,11 @@ aug = ImageDataGenerator(
     zoom_range=0.15,
     width_shift_range=0.2,
     height_shift_range=0.2,
-    shear_range=0.1,
+    shear_range=0.15,
     horizontal_flip=True,
     fill_mode="nearest",
 )
+
 
 baseModel = MobileNetV2(
     weights="imagenet", include_top=False, input_tensor=Input(shape=(224, 224, 3))
@@ -83,7 +86,6 @@ model = Model(inputs=baseModel.input, outputs=headModel)
 
 for layer in baseModel.layers:
     layer.trainable = False
-
 
 print("[INFO] compiling model...")
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
@@ -108,16 +110,16 @@ print(classification_report(testY.argmax(axis=1), predIdxs, target_names=lb.clas
 print("[INFO] saving mask detector model...")
 model.save("mask_detector.model", save_format="h5")
 
-# plot the training loss and accuracy
-N = EPOCHS
-plt.style.use("ggplot")
-plt.figure()
-plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
-plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
-plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
-plt.title("Training Loss and Accuracy")
-plt.xlabel("Epoch #")
-plt.ylabel("Loss/Accuracy")
-plt.legend(loc="lower left")
-plt.savefig("plot.png")
+# # plot the training loss and accuracy
+# N = EPOCHS
+# plt.style.use("ggplot")
+# plt.figure()
+# plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
+# plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
+# plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
+# plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
+# plt.title("Training Loss and Accuracy")
+# plt.xlabel("Epoch #")
+# plt.ylabel("Loss/Accuracy")
+# plt.legend(loc="lower left")
+# plt.savefig("plot.png")
