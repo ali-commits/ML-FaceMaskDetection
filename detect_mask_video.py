@@ -5,11 +5,11 @@ from imutils.video import VideoStream
 import numpy as np
 import cv2
 import os
+
 VID_STREAM = 0
 
 
 def detectMask(frame, faceNet, maskNet):
-
     h, w = frame.shape[:2]
     blob = cv2.dnn.blobFromImage(frame, 1.0, (224, 224), (104.0, 177.0, 123.0))
     faceNet.setInput(blob)
@@ -62,14 +62,16 @@ vs = VideoStream(src=VID_STREAM).start()
 while True:
 
     frame = vs.read()
+    frame = cv2.flip(frame, 1)
     locs, preds = detectMask(frame, faceNet, maskNet)
 
     for (box, pred) in zip(locs, preds):
         startX, startY, endX, endY = box
         mask, withoutMask = pred
 
-        label = "Mask" if mask > withoutMask else "No Mask"
-        color = (0, int(255 * mask), int(255 * withoutMask))
+        label, color = (
+            ("Mask", (0, 255, 0)) if mask > withoutMask else ("No Mask", (0, 0, 255))
+        )
 
         label = f"{label}: {max(mask, withoutMask) * 100:.2f}"
 

@@ -15,13 +15,14 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
+import cv2
 import numpy as np
 import os
 
 
 INIT_LR = 1e-4
-EPOCHS = 10
-BS = 16
+EPOCHS = 5
+BS = 32
 
 DIRECTORY = "dataset"
 CATEGORIES = os.listdir(DIRECTORY)  # ["with_mask", "without_mask"]
@@ -50,21 +51,21 @@ labels = to_categorical(labels)
 data = np.array(data, dtype="float32")
 labels = np.array(labels)
 
-# trainX, testX, trainY, testY = train_test_split(
-#     data, labels, test_size=0.2, stratify=labels, random_state=42
-# )
-trainX = data
-testX = data
-trainY = labels
-testY = labels
+trainX, testX, trainY, testY = train_test_split(
+    data, labels, test_size=0.2, stratify=labels, random_state=42
+)
+# trainX = data
+# testX = data
+# trainY = labels
+# testY = labels
 
 # Learning
 aug = ImageDataGenerator(
-    rotation_range=20,
-    zoom_range=0.15,
+    rotation_range=30,
+    zoom_range=0.10,
     width_shift_range=0.2,
     height_shift_range=0.2,
-    shear_range=0.15,
+    shear_range=0.10,
     horizontal_flip=True,
     fill_mode="nearest",
 )
