@@ -39,14 +39,8 @@ def detectMask(frame, faceNet, maskNet):
             locs.append((startX, startY, endX, endY))
 
     if len(faces) > 0:
-        # for faster inference we'll make batch predictions on *all*
-        # faces at the same time rather than one-by-one predictions
-        # in the above `for` loop
         faces = np.array(faces, dtype="float32")
         preds = maskNet.predict(faces, batch_size=32)
-
-    # return a 2-tuple of the face locations and their corresponding
-    # locations
     return (locs, preds)
 
 
